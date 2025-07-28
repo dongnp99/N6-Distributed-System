@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Distributed Request Demo</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 100px; }
+    .box { margin-top: 20px; border: 1px solid #ccc; padding: 10px; }
+    button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Distributed Request System</h1>
+  <textarea id="requestInput" placeholder="Enter your request here..."></textarea><br>
+  <label>
+    <input type="checkbox" id="useKafkaToggle" />
+    Send via Kafka
+  </label>
+  <button onclick="sendRequest()">Send Request</button>
+  <button onclick="sendMultipleRequests()">Send 10 Requests</button>
+
+  <div class="box">
+    <h3>Sent Requests:</h3>
+    <ul id="sentList"></ul>
+  </div>
+
+  <div class="box">
+    <h3>Processed Requests:</h3>
+    <ul id="processedList"></ul>
+  </div>
+
+  <script>
+    const senderApi = 'http://127.0.0.1:8080/send'; // update if needed
+
+    const sentList = document.getElementById('sentList');
+    const processedList = document.getElementById('processedList');
+
+    function sendRequest(content = null) {
+      const message = content || document.getElementById('requestInput').value;
+      if (!message) return alert("Please enter something!");
+	  const useKafka = document.getElementById("useKafkaToggle").checked;
+      fetch(senderApi, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, useKafka })
+      }).then(res => {
+        const item = document.createElement('li');
+        item.textContent = `Sent: ${message}`;
+        sentList.appendChild(item);
+      }).catch(err => {
+        alert("Failed to send: " + err);
+      });
+    }
+
+    function sendMultipleRequests(content = null) {
+      const message = content || document.getElementById('requestInput').value;
+      if (!message) return alert("Please enter something!");	
+      for (let i = 1; i <= 10; i++) {
+        sendRequest("Request #" + i + " - " + new Date().toISOString() + " - Content: " + data);
+      }
+    }
+
+    // Optional polling logic to get processed requests
+    setInterval(() => {
+      fetch('http://127.0.0.1:8081/process/processed') // replace if needed
+        .then(res => res.json())
+        .then(data => {
+          processedList.innerHTML = '';
+          data.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `Processed: ${item}`;
+            processedList.appendChild(li);
+          });
+        });
+    }, 3000); // poll every 3 seconds
+  </script>
+</body>
+</html>
