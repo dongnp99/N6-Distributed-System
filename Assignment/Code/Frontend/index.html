@@ -1,25 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Distributed Request Demo</title>
+  <title>Hệ thống đặt vé</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    textarea { width: 100%; height: 100px; }
-    .box { margin-top: 20px; border: 1px solid #ccc; padding: 10px; }
-    button { margin-right: 10px; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #ece9e6, #ffffff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 400px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+
+    .status strong {
+      color: #27ae60;
+    }
+
+    .user {
+      font-size: 16px;
+      margin-bottom: 30px;
+      color: #555;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #result.success {
+      color: #27ae60;
+    }
+
+    #result.error {
+      color: #e74c3c;
+    }
   </style>
 </head>
 <body>
-  <h1>Distributed Request System</h1>
-  <textarea id="requestInput" placeholder="Enter your request here..."></textarea><br>
-  <label>
-    <input type="checkbox" id="useKafkaToggle" />
-    Send via Kafka
-  </label>
-  <button onclick="sendRequest()">Send Request</button>
-  <button onclick="sendMultipleRequests()">Send 10 Requests</button>
-
+<div class="container">
+    <h1>🎟️ HỆ THỐNG ĐẶT VÉ</h1>
+    <div class="status">
+      🕙 Trạng thái mở bán: <strong>ĐÃ MỞ</strong>
+    </div>
+    <div class="user">
+      👤 Người dùng: <span id="username"></span>
+    </div>
+  <button onclick="sendRequest()">VÀO MUA VÉ</button>
+  <button onclick="sendMultipleRequests()">VÀO MUA 10 VÉ</button>
+  <div>
+	  <textarea id="requestInput" placeholder="Enter your request here..."></textarea><br>
+	  <label>
+		<input type="checkbox" id="useKafkaToggle" />
+		Send via Kafka
+	  </label>
+  </div>
+    <div id="result"></div>
   <div class="box">
     <h3>Sent Requests:</h3>
     <ul id="sentList"></ul>
@@ -29,8 +101,12 @@
     <h3>Processed Requests:</h3>
     <ul id="processedList"></ul>
   </div>
+  </div>
 
   <script>
+    const username = "user_" + Math.floor(Math.random() * 10000);
+    document.getElementById("username").innerText = username;
+	
     const senderApi = 'http://127.0.0.1:8080/send'; // update if needed
 
     const sentList = document.getElementById('sentList');
@@ -43,13 +119,25 @@
       fetch(senderApi, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, useKafka })
+        body: JSON.stringify({           
+		  userId: username,
+          action: "buy-ticket",
+          timestamp: new Date().toISOString(),
+		  message,
+          useKafka		  
+	  })
       }).then(res => {
         const item = document.createElement('li');
         item.textContent = `Sent: ${message}`;
         sentList.appendChild(item);
+		if (res.ok) {
+          document.getElementById("result").innerText = "✅ Gửi thành công!";
+        } else {
+          document.getElementById("result").innerText = "❌ Lỗi gửi yêu cầu!";
+        }
       }).catch(err => {
-        alert("Failed to send: " + err);
+        console.error(err);
+        document.getElementById("result").innerText = "🚫 Lỗi kết nối server.";
       });
     }
 
@@ -57,7 +145,7 @@
       const message = content || document.getElementById('requestInput').value;
       if (!message) return alert("Please enter something!");	
       for (let i = 1; i <= 10; i++) {
-        sendRequest("Request #" + i + " - " + new Date().toISOString() + " - Content: " + data);
+        sendRequest("Request #" + i + " - " + new Date().toISOString() + " - Content: " + message);
       }
     }
 

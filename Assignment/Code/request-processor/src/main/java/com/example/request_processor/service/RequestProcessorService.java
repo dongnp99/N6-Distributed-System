@@ -17,4 +17,6 @@ public class RequestProcessorService {
     public List<String> getAll() {
         return new ArrayList<>(processedRequests);
     }
+
+    public void clearMessages() { processedRequests.clear(); }
 }
