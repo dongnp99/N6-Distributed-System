@@ -2,6 +2,7 @@ package com.example.request_processor.controller;
 
 import com.example.request_processor.DTO.KafkaMessageDTO;
 import com.example.request_processor.entity.MessageWrapper;
+import com.example.request_processor.entity.Tickets;
 import com.example.request_processor.service.KafkaRequestConsumer;
 import com.example.request_processor.service.RequestProcessorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,14 +31,19 @@ public class RequestProcessorController {
         System.out.println("Processing: " + content.getMessage());
 
         // Lưu vào danh sách đã xử lý
-        processedService.add(content.getMessage());
+        processedService.process(content.getMessage());
 
         return "Processed: " + content.getMessage();
     }
 
-    @GetMapping("/processed")
-    public java.util.List<String> getProcessed() {
-        return processedService.getAll();
+    @GetMapping("/processed-direct")
+    public java.util.List<Tickets> getProcessedDirect() {
+        return processedService.getAllDirect();
+    }
+
+    @GetMapping("/processed-kafka")
+    public java.util.List<Tickets> getProcessedQueue() {
+        return processedService.getAllKafka();
     }
 
     @KafkaListener(topics = "requests", groupId = "processor-group")
@@ -45,7 +51,7 @@ public class RequestProcessorController {
         try {
             ObjectMapper mapper = new ObjectMapper();
             MessageWrapper msg = mapper.readValue(rawMessage, MessageWrapper.class);
-            processedService.add(msg.getMessage());
+            processedService.process(msg.getMessage());
             System.out.println("📥 Kafka JSON Received: " + msg.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,9 +63,15 @@ public class RequestProcessorController {
         return kafkaRequestConsumerService.readMessages(); // Tự implement
     }
 
-    @DeleteMapping("/clear")
-    public ResponseEntity<String> clearProcessedMessages() {
-        processedService.clearMessages();
+    @DeleteMapping("/clear-direct")
+    public ResponseEntity<String> clearProcessedDirectMessages() {
+        processedService.clearDirectMessages();
+        return ResponseEntity.ok("Processed messages cleared.");
+    }
+
+    @DeleteMapping("/clear-kafka")
+    public ResponseEntity<String> clearProcessedKafkaMessages() {
+        processedService.clearKafkaMessages();
         return ResponseEntity.ok("Processed messages cleared.");
     }
 }
