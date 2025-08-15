@@ -1,0 +1,120 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1b1b1b; /* nền tối chủ đạo */
+  color: #eaeaea;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  background-color: #121212;
+  color: #00e979;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+header .logo {
+  height: 36px;
+  width: auto;
+  border-radius:10px;
+}
+
+.grid {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.column {
+  flex: 1;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eeeeee;
+}
+
+h2 {
+  color: #00b26f;
+  margin-top: 0;
+}
+
+.username {
+  font-weight: bold;
+  color: #00965e;
+}
+
+.btn {
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  margin: 6px 4px 0 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn.primary {
+  background-color: #00b26f;
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: #00965e;
+}
+
+.btn.danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn.danger:hover {
+  background-color: #c0392b;
+}
+
+.log-entry {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  background-color: #333;
+  color: #00e979;
+  border-radius: 4px;
+  font-size: 13px;
+  word-break: break-word;
+  border-left: 4px solid #00b26f;
+}
+
+.log-entry.kafka {
+  border-left-color: #2980b9;
+}
+.pagination {
+      margin-top: 12px;
+      text-align: center;
+}
+
+.pagination button {
+  margin: 0 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination button:hover {
+  background-color: #2980b9;
+  color: #fff;
+  border-color: #2980b9;
+}
+
+.pagination button.active {
+  background-color: #3498db;
+  color: #fff;
+  border-color: #3498db;
+}

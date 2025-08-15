@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🎟️ Hệ thống đặt vé phân tán</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <span>Trang Quản Lý Giao Dịch Vé</span>
+  <img src="subicha-joker-1.png" alt="Logo" class="logo">
+</header>
+<div class="grid">
+  <!-- CỘT 1: Giao diện gửi yêu cầu -->
+  <div class="column">
+    <h2>🟦 Gửi yêu cầu đặt vé</h2>
+    <div class="user-section">
+      👤 Người dùng: <span class="username" id="username"></span><br><br>
+      <button class="btn primary" onclick="sendRequest()">🎟️ Mua vé nhanh</button>
+      <button class="btn primary" onclick="sendRequestKafka()">🎟️ Mua vé hàng đợi</button>
+      <div id="sendStatus" style="margin-top: 20px; font-weight: bold;"></div>
+    </div>
+  </div>
+
+  <!-- CỘT 2: Message Direct đã xử lý -->
+  <div class="column">
+    <h2>🟢 Danh sách vé xử lý trực tiếp</h2>
+    <div>
+      👤 Số lượng: <span class="username" id="totalDirect"></span><br><br>
+      <button class="btn danger" onclick="deleteAllDirect()">🗑️ Xóa dữ liệu đã xử lý</button>
+    </div>
+    <hr>
+    <div id="processedListDirect">
+      <div class="log-entry">Đang tải...</div>
+    </div>
+    <div id="paginationDirect" class="pagination"></div>
+  </div>
+
+  <!-- CỘT 3: Message Kafka đã xử lý -->
+  <div class="column">
+    <h2>🔵 Danh sách vé xử lý qua Kafka</h2>
+    <div>
+      👤 Số lượng: <span class="username" id="totalKafka"></span><br><br>
+      <button class="btn danger" onclick="deleteAllKafka()">🗑️ Xóa dữ liệu đã xử lý</button>
+    </div>
+    <hr>
+    <div id="processedListKafka">
+      <div class="log-entry kafka">Đang tải...</div>
+    </div>
+    <div id="paginationKafka" class="pagination"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
